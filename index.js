@@ -18,10 +18,21 @@ const getAnimeImage = (category) => {
     return null;
 };
 
+const getnsfw = (category) => {
+    const jsonPath = path.join(__dirname, "nsfw", `${nsf}.json`);
+    
+    if (fs.existsSync(jsonPath)) {
+        const data = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+        return data[Math.floor(Math.random() * data.length)];
+    }
+    
+    return null;
+};
+
 // API Route to stream the image
-app.get("/api/anime/:category", async (req, res) => {
-    const category = req.params.category;
-    const imageUrl = getAnimeImage(category);
+app.get("/api/nsfw/:nsf", async (req, res) => {
+    const nsf = req.params.nsf;
+    const imageUrl = getnsfw(nsf);
 
     if (!imageUrl) {
         return res.status(404).json({ error: "Category not found" });
