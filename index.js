@@ -6,38 +6,25 @@ const axios = require("axios");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Function to get a random image URL from JSON
-const getImage = (category, type) => {
-    const jsonPath = path.join(__dirname, type, `${category}.json`);
-
-    console.log(`Looking for JSON: ${jsonPath}`);
-
+// Function to get a random image from JSON
+const getRandomImage = (folder, category) => {
+    const jsonPath = path.join(__dirname, folder, `${category}.json`);
+    
     if (fs.existsSync(jsonPath)) {
         const data = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
-
-        if (data.length > 0) {
-            const randomImage = data[Math.floor(Math.random() * data.length)];
-            console.log(`Found Image: ${randomImage}`);
-            return randomImage;
-        } else {
-            console.log("JSON file is empty");
-            return null;
-        }
-    } else {
-        console.log("JSON file does not exist");
-        return null;
+        return data[Math.floor(Math.random() * data.length)];
     }
+    
+    return null;
 };
 
-// API Route for Anime images
+// Anime Endpoint: `/api/anime/:category`
 app.get("/api/anime/:category", async (req, res) => {
     const category = req.params.category;
-    console.log(`Requested Anime category: ${category}`);
-
-    const imageUrl = getImage(category, "anime");
+    const imageUrl = getRandomImage("anime", category);
 
     if (!imageUrl) {
-        return res.status(404).json({ error: "Anime category not found or no images available" });
+        return res.status(404).json({ error: "Category not found" });
     }
 
     try {
@@ -46,20 +33,17 @@ app.get("/api/anime/:category", async (req, res) => {
         res.setHeader("Content-Type", response.headers["content-type"]);
         response.data.pipe(res);
     } catch (error) {
-        console.error("Error fetching anime image:", error.message);
-        res.status(500).json({ error: "Failed to fetch anime image" });
+        res.status(500).json({ error: "Failed to fetch image" });
     }
 });
 
-// API Route for NSFW images
-app.get("/api/nsfw/:nsf", async (req, res) => {
-    const nsf = req.params.nsf;
-    console.log(`Requested NSFW category: ${nsf}`);
-
-    const imageUrl = getImage(nsf, "nsfw");
+// NSFW Endpoint: `/api/nsfw/:category`
+app.get("/api/nsfw/:category", async (req, res) => {
+    const category = req.params.category;
+    const imageUrl = getRandomImage("nsfw", category);
 
     if (!imageUrl) {
-        return res.status(404).json({ error: "NSFW category not found or no images available" });
+        return res.status(404).json({ error: "Category not found" });
     }
 
     try {
@@ -68,12 +52,11 @@ app.get("/api/nsfw/:nsf", async (req, res) => {
         res.setHeader("Content-Type", response.headers["content-type"]);
         response.data.pipe(res);
     } catch (error) {
-        console.error("Error fetching NSFW image:", error.message);
-        res.status(500).json({ error: "Failed to fetch NSFW image" });
+        res.status(500).json({ error: "Failed to fetch image" });
     }
 });
 
-// Start server
+// Start server (for local testing)
 if (process.env.NODE_ENV !== "production") {
     app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 }
