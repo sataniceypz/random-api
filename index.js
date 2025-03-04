@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Function to get a random image URL from JSON
-const getRandomImage = (category) => {
+const getAnimeImage = (category) => {
     const jsonPath = path.join(__dirname, "anime", `${category}.json`);
     
     if (fs.existsSync(jsonPath)) {
@@ -19,9 +19,9 @@ const getRandomImage = (category) => {
 };
 
 // API Route to stream the image
-app.get("/api/:category", async (req, res) => {
+app.get("/api/anime/:category", async (req, res) => {
     const category = req.params.category;
-    const imageUrl = getRandomImage(category);
+    const imageUrl = getAnimeImage(category);
 
     if (!imageUrl) {
         return res.status(404).json({ error: "Category not found" });
