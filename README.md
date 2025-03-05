@@ -11,7 +11,7 @@ Welcome to the Base  API! This API provides a simple and efficient way to stream
 The base URL for the API is:
 
 ```
-random-api-eypz.vercel.app
+https://eypz-random-api.vercel.app/
 ```
 
 ## Usage
